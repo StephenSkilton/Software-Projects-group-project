@@ -40,7 +40,7 @@ def get_valid_file():
         else:
             show_info_alert("Please select a valid CSV or Excel file.")
 
-file_path = select_file()
+
 # file_path = ("sample_usage_data_month.csv")
 # file_path = ("sample_usage_data_month.xlsx")
 
@@ -75,6 +75,7 @@ def flat_calculation(data):
     for value in data.values():
         usage += value
     total=usage*0.25+10
+    total = round(total, 2)
     return total
 
 def tier_calculation(data):
@@ -94,6 +95,7 @@ def tier_calculation(data):
         tier3= usage-300
         total=tier3 * 0.4 + tier1 + tier2 + 10
 
+    total = round(total, 2)
     return total
 
 def time_calculation(data):
@@ -113,11 +115,13 @@ def time_calculation(data):
             shoulder += data[key]
     total=(peak * 0.4) + (off*0.15) +(shoulder*0.25) + 10
 
+    total = round(total, 2)
+
     return total
 
 
 file_path = get_valid_file()
 data_dict = file_reader(file_path)
-print("Flat rate total: " + str(flat_calculation(data_dict)))
-print ("Tiered tariff total: " + str(tier_calculation(data_dict)))
-print ("TOU Tariff total: "+ str(time_calculation(data_dict)))
+print("Flat rate total: $" + str(flat_calculation(data_dict)))
+print ("Tiered tariff total: $" + str(tier_calculation(data_dict)))
+print ("TOU Tariff total: $"+ str(time_calculation(data_dict)))
