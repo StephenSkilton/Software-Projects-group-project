@@ -29,34 +29,45 @@ def select_file():
         print("No file selected.")
         return None
 
+def get_valid_file():
+    while True:
+        file_path = select_file()
+        if file_path is None:
+            print("No file selected. Exiting program.")
+            sys.exit()
+        elif file_path.endswith((".csv", ".xls", ".xlsx")):
+            return file_path
+        else:
+            show_info_alert("Please select a valid CSV or Excel file.")
 
 file_path = select_file()
 # file_path = ("sample_usage_data_month.csv")
 # file_path = ("sample_usage_data_month.xlsx")
 
-if file_path.endswith(".csv"):
+
+def file_reader(file_path):
     data_dict = {}
-    with open(file_path, mode="r", newline="") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            # Parse timestamp string into datetime object
+    if file_path.endswith(".csv"):
+        with open(file_path, mode="r", newline="") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                # Parse timestamp string into datetime object
+                timestamp = datetime.strptime(row["timestamp"], "%Y-%m-%d %H:%M:%S")
+                kwh = float(row["kWh"])  # convert to float
+                data_dict[timestamp] = kwh
+    else:
+
+        df = pd.read_excel(file_path)
+        for index, row in df.iterrows():
             timestamp = datetime.strptime(row["timestamp"], "%Y-%m-%d %H:%M:%S")
-            kwh = float(row["kWh"])  # convert to float
+            kwh = float(row["kWh"])
             data_dict[timestamp] = kwh
-elif file_path.endswith(".xls") or file_path.endswith(".xlsx"):
-    data_dict = {}
-    df = pd.read_excel(file_path)
-    for index, row in df.iterrows():
-        timestamp = datetime.strptime(row["timestamp"], "%Y-%m-%d %H:%M:%S")
-        kwh = float(row["kWh"])
-        data_dict[timestamp] = kwh
-
-else:
-    print("File extension not supported")
-    show_info_alert()
-    select_file()
 
 
+
+
+
+    return data_dict
 
 
 def flat_calculation(data):
@@ -105,11 +116,8 @@ def time_calculation(data):
     return total
 
 
-
-
-
-
-
+file_path = get_valid_file()
+data_dict = file_reader(file_path)
 print("Flat rate total: " + str(flat_calculation(data_dict)))
 print ("Tiered tariff total: " + str(tier_calculation(data_dict)))
 print ("TOU Tariff total: "+ str(time_calculation(data_dict)))
