@@ -31,6 +31,8 @@ def select_file():
 
 
 file_path = select_file()
+# file_path = ("sample_usage_data_month.csv")
+# file_path = ("sample_usage_data_month.xlsx")
 
 if file_path.endswith(".csv"):
     data_dict = {}
